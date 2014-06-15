@@ -29,7 +29,9 @@ The fact that our "tree" is as flat as possible makes it easier to treat certain
 
 Now there was an other problem. To represent user, we use the class inetOrgPerson, the thing is, we want to store the "gender" of the person, but this generic classObject does not possess such a field. We had to add our own custom attribute, called "sexType". To do this, we used OpenDJ, to modifiy the Object class heigPeople (which is where our people are stored, and add a new attribute, which was sexType).
 
+![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/ADD_sexType.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvQUREX3NleFR5cGUucG5nIiwiZXhwaXJlcyI6MTQwMzQyNTgzOH0%3D--7c8d4363bc2fbecbe352331fcd714ccbb63402a7)
 
+There was an other problem, LDAP does not tolerate accents in mails, so we found a method that "converts" accents to normal characters. It is called when we generate the ldif file.
 
 ## Task 3 ##
 
@@ -72,15 +74,191 @@ So there is an entry for each person. The departments are also present at the en
 Once this was imported in OpenDJ, using the import option, we get this result :
 
 
+![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/Manage_Entries.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvTWFuYWdlX0VudHJpZXMucG5nIiwiZXhwaXJlcyI6MTQwMzQyNTg4OX0%3D--8234ec3f643c4b39a926819c36bf9b0b858521ea)
+
+On the left, all the "People" can be seen and some filters can also be applied here. Talking about filters, this is what the new task is all about.
+
+## Task 4 ##
+
+This task is meant to explore some of the filters available.
+
+**What is the number (not the list!) of people stored in the directory?**
 
 
+    ./ldapsearch --hostname 127.0.0.1 --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --countentries --baseDN "dc=heigvd,dc=ch" "(objectclass=heigPeople)" ldapentrycount
 
 
+> Result is 10'000
 
+**What is the number of departments stored in the directory?**
+    ./ldapsearch --hostname 127.0.0.1 --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --countentries --baseDN "dc=heigvd,dc=ch" "(objectclass=organizationalUnit)" ldapentrycount
 
+> Result is 8 (it also takes Departments and People into account).
 
+**What is the list of people who belong to the TIC Department?**
 
+    ./ldapsearch --hostname 127.0.0.1 --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --baseDN "dc=heigvd,dc=ch" "(departmentNumber=TIC)"
 
+**What is the list of students in the directory?**
 
+    ./ldapsearch --hostname 127.0.0.1 --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --baseDN "dc=heigvd,dc=ch" "(employeeType=Student)"
 
-http://docs.oracle.com/cd/E19450-01/820-6169/defining-dynamic-groups.html
+**What is the list of students in the TIC Department?**
+
+    ./ldapsearch --hostname 127.0.0.1 --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --baseDN "dc=heigvd,dc=ch" "(&(departmentNumber=TIC)(employeeType=student))" 
+
+So these were the easy ones. Now for the dynamic groups :
+
+**What command do you run to define a dynamic group that represents all members of the TIN Department?**
+
+    dn: cn=TINPeople,ou=People,dc=heigvd,dc=ch
+    cn: TINPeople
+    objectClass: top
+    objectClass: groupOfURLs
+    ou: People
+    memberURL: ldap:///ou=People,dc=heigvd,dc=ch??sub?(departmentNumber=TIN)
+
+And then : 
+
+    ./ldapmodify --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --defaultAdd --filename /home/bruno/TINPeople.ldif 
+
+**What command do you run to get the list of all members of the TIN Department?**   
+ 
+    ./ldapsearch --hostname 127.0.0.1 --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --baseDN "dc=heigvd,dc=ch" "(&(objectclass=heigPeople)(isMemberOf=cn=TINPeople,ou=People,dc=heigvd,dc=ch))"
+
+> dn: uid=EID_109975,ou=people,dc=heigvd,dc=ch
+> objectClass: person
+> objectClass: organizationalPerson
+> objectClass: inetOrgPerson
+> objectClass: top
+> objectClass: heigPeople
+> sexType: MALE
+> givenName: Edgar
+> uid: EID_109975
+> cn: Edgar.De Decker
+> sn: De Decker
+> telephoneNumber: (024) 777 705 519
+> mail: edgar.de decker@heig-vd.ch
+> departmentNumber: **TIN**
+> employeeType: Professor
+> 
+> dn: uid=EID_109976,ou=people,dc=heigvd,dc=ch
+> objectClass: person
+> objectClass: organizationalPerson
+> objectClass: inetOrgPerson
+> objectClass: top
+> objectClass: heigPeople
+> sexType: MALE
+> givenName: Dylan
+> uid: EID_109976
+> cn: Dylan.Bauer
+> sn: Bauer
+> telephoneNumber: (024) 777 832 310
+> mail: dylan.bauer@heig-vd.ch
+> departmentNumber: **TIN**
+> employeeType: Student
+> 
+> dn: uid=EID_109990,ou=people,dc=heigvd,dc=ch
+> objectClass: person
+> objectClass: organizationalPerson
+> objectClass: inetOrgPerson
+> objectClass: top
+> objectClass: heigPeople
+> sexType: MALE
+> givenName: Guillaume
+> uid: EID_109990
+> cn: Guillaume.Durant
+> sn: Durant
+> telephoneNumber: (024) 777 836 858
+> mail: guillaume.durant@heig-vd.ch
+> departmentNumber: **TIN**
+> employeeType: Admin
+
+**What command do you run to define a dynamic group that represents all students with a last name starting with the letter 'A'?**
+    
+    dn: cn=StartingByA,ou=People,dc=heigvd,dc=ch
+    cn: StartingByA
+    objectClass: top
+    objectClass: groupOfURLs
+    ou: People
+    memberURL: ldap:///ou=People,dc=heigvd,dc=ch??sub?(&(employeeType=student)(sn=A*))
+
+**Note:** There are no results with A, so in the example, we will use B instead. (Just change the sn=A* in sn=B*)
+
+And then we do this : 
+    
+    ./ldapmodify --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --defaultAdd --filename /home/bruno/NamesStartingByA.ldif Processing ADD request for cn=StartingByA,ou=People,dc=heigvd,dc=ch
+
+**What command do you run to get the list of these students?**
+
+    ./ldapsearch --hostname 127.0.0.1 --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --baseDN "dc=heigvd,dc=ch" "(&(objectclass=heigPeople)(isMemberOf=cn=StartingByA,ou=People,dc=heigvd,dc=ch))"
+
+> dn: uid=EID_109895,ou=people,dc=heigvd,dc=ch
+> objectClass: person
+> objectClass: organizationalPerson
+> objectClass: inetOrgPerson
+> objectClass: top
+> objectClass: heigPeople
+> sexType: FEMALE
+> givenName: Carine
+> uid: EID_109895
+> cn: Carine.**Bauer**
+> sn: Bauer
+> telephoneNumber: (024) 777 538 119
+> mail: carine.bauer@heig-vd.ch
+> departmentNumber: HEG
+> employeeType: Student
+> 
+> dn: uid=EID_109941,ou=people,dc=heigvd,dc=ch
+> objectClass: person
+> objectClass: organizationalPerson
+> objectClass: inetOrgPerson
+> objectClass: top
+> objectClass: heigPeople
+> sexType: FEMALE
+> givenName: Faustine
+> uid: EID_109941
+> cn: Faustine.**Bauer**
+> sn: Bauer
+> telephoneNumber: (024) 777 412 637
+> mail: faustine.bauer@heig-vd.ch
+> departmentNumber: TIN
+> employeeType: Student
+> 
+> dn: uid=EID_109947,ou=people,dc=heigvd,dc=ch
+> objectClass: person
+> objectClass: organizationalPerson
+> objectClass: inetOrgPerson
+> objectClass: top
+> objectClass: heigPeople
+> sexType: MALE
+> givenName: Henri
+> uid: EID_109947
+> cn: Henri.**Bauer**
+> sn: Bauer
+> telephoneNumber: (024) 777 555 170
+> mail: henri.bauer@heig-vd.ch
+> departmentNumber: TIC
+> employeeType: Student
+> 
+> dn: uid=EID_109976,ou=people,dc=heigvd,dc=ch
+> objectClass: person
+> objectClass: organizationalPerson
+> objectClass: inetOrgPerson
+> objectClass: top
+> objectClass: heigPeople
+> sexType: MALE
+> givenName: Dylan
+> uid: EID_109976
+> cn: Dylan.**Bauer**
+> sn: Bauer
+> telephoneNumber: (024) 777 832 310
+> mail: dylan.bauer@heig-vd.ch
+> departmentNumber: TIN
+> employeeType: Student
+
+Si this is it !
+
+By the way, this website was plenty useful for dynamic groups: 
+> http://docs.oracle.com/cd/E19450-01/820-6169/defining-dynamic-groups.html
+
