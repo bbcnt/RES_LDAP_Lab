@@ -1,0 +1,6 @@
+dn: cn=TINPeople,ou=People,dc=heigvd,dc=ch
+cn: TINPeople
+objectClass: top
+objectClass: groupOfURLs
+ou: People
+memberURL: ldap:///ou=People,dc=heigvd,dc=ch??sub?(departmentNumber=TIN)

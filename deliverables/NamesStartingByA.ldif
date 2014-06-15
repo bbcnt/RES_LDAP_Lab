@@ -1,0 +1,6 @@
+dn: cn=StartingByA,ou=People,dc=heigvd,dc=ch
+cn: StartingByA
+objectClass: top
+objectClass: groupOfURLs
+ou: People
+memberURL: ldap:///ou=People,dc=heigvd,dc=ch??sub?(&(employeeType=student)(sn=A*))
