@@ -91,6 +91,7 @@ This task is meant to explore some of the filters available.
 > Result is 10'000
 
 **What is the number of departments stored in the directory?**
+
     ./ldapsearch --hostname 127.0.0.1 --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --countentries --baseDN "dc=heigvd,dc=ch" "(objectclass=organizationalUnit)" ldapentrycount
 
 > Result is 8 (it also takes Departments and People into account).
