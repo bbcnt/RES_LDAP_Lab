@@ -27,9 +27,24 @@ In a more visual way, this is the one we made "on paper":
 
 The fact that our "tree" is as flat as possible makes it easier to treat certain "exceptions", such as having a teacher that also is part of administration, or someone teaching in two different departments. In this fashion, our people can easily switch from TIC to TIN, from Student to Assistant, etc.
 
-Now there was an other problem. To represent users, we use the class inetOrgPerson, the thing is, we want to store the "gender" of the person, but this generic classObject does not possess such a field. We had to add our own custom attribute, called "sexType". To do this, we used OpenDJ, to modifiy the Object class heigPeople (which is where our people are stored, and add a new attribute, which was sexType). This attribute was also created with the OpenDJ assistant.
+Now there was an other problem. To represent users, we use the class inetOrgPerson, the thing is, we want to store the "gender" of the person, but this generic classObject does not possess such a field. We had to add our own custom attribute, called "sexType", that we added to the class heigPeople. To do this, we used OpenDJ, to modifiy the Object class heigPeople (which is where our people are stored, and add a new attribute, which was sexType). This attribute was also created with the OpenDJ assistant. It created this ldif file:
+    
+    dn: cn=schema
+     changetype: modify
+     add: objectClasses
+     objectClasses: ( heigpeople-oid NAME 'heigPeople' DESC 'People from HEIG-VD' SUP ( inetOrgPerson $ top ) STRUCTURAL MAY sexType X-SCHEMA-FILE 'heig-user.ldif'
+ 
+![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/ADD_sexType.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvQUREX3NleFR5cGUucG5nIiwiZXhwaXJlcyI6MTQwMzQyNTgzOH0%3D--7c8d4363bc2fbecbe352331fcd714ccbb63402a7)   
 
-![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/ADD_sexType.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvQUREX3NleFR5cGUucG5nIiwiZXhwaXJlcyI6MTQwMzQyNTgzOH0%3D--7c8d4363bc2fbecbe352331fcd714ccbb63402a7)
+To create the heigPeople class, this file was used:
+
+    dn: cn=schema
+     changetype: modify
+     add: objectClasses
+     objectClasses: ( heigPeople-oid NAME 'heigPeople' DESC 'People from HEIG-VD' SUP ( inetOrgPerson $ top ) STRUCTURAL MAY sexType X-SCHEMA-FILE 'heig-user.ldif' )
+
+
+
 
 There was an other problem, LDAP does not tolerate accents in mails, so we found a method that "converts" accents to normal characters. It is called when we generate the ldif file.
 

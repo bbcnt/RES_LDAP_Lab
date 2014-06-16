@@ -1,0 +1,4 @@
+dn: cn=schema
+ changetype: modify
+ add: objectClasses
+ objectClasses: ( heigpeople-oid NAME 'heigPeople' DESC 'People from HEIG-VD' SUP ( inetOrgPerson $ top ) STRUCTURAL MAY sexType X-SCHEMA-FILE 'heig-user.ldif'
