@@ -23,8 +23,6 @@ In a more visual way, this is the one we made "on paper":
 
 ![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/DIT_Structure.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvRElUX1N0cnVjdHVyZS5wbmciLCJleHBpcmVzIjoxNDAzMjU2MjU5fQ%3D%3D--b35c1d00171fd87e478992f38fc14e2b228e92c1)
 
-**Note:** People and Departments are OU (Organizational Units) and Under them, Ana, Bob and Marc Are cn (common Names).
-
 The fact that our "tree" is as flat as possible makes it easier to treat certain "exceptions", such as having a teacher that also is part of administration, or someone teaching in two different departments. In this fashion, our people can easily switch from TIC to TIN, from Student to Assistant, etc.
 
 Now there was an other problem. To represent users, we use the class inetOrgPerson, the thing is, we want to store the "gender" of the person, but this generic classObject does not possess such a field. We had to add our own custom attribute, called "sexType", that we added to the class heigPeople. To do this, we used OpenDJ, to modifiy the Object class heigPeople (which is where our people are stored, and add a new attribute, which was sexType). This attribute was also created with the OpenDJ assistant. It created this ldif file:
