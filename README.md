@@ -12,16 +12,16 @@ Here, we will be explaining what we have done in this lab.
 ## First task ##
 This is the first task, the objectif is to obtain the users.csv file. To do so, there's a java program that was provided. Here is a short example of the users.csv file.
 
-![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/Extract_Users.csv.PNG?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvRXh0cmFjdF9Vc2Vycy5jc3YuUE5HIiwiZXhwaXJlcyI6MTQwMzI1NTI0Mn0%3D--9613157522dd34b447b6a0502b15f07e8f836264)
+![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/Extract_Users.csv.PNG?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvRXh0cmFjdF9Vc2Vycy5jc3YuUE5HIiwiZXhwaXJlcyI6MTQwMzk3MDEyNn0%3D--2c50578e6603f511f32766fc16bda9640cd35150)
 
 ##Task 2 ##
 This second task is all about the DIT's structure. After a few discussions with the teacher, we decided to implement a structure as flat as possible. This is the one, as shown in OpenDJ : 
 
-![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/Tree.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvVHJlZS5wbmciLCJleHBpcmVzIjoxNDAzMjU1NjcyfQ%3D%3D--95c7f87ee801a86e88db4cd7c356b869257a6246)
+![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/Tree.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvVHJlZS5wbmciLCJleHBpcmVzIjoxNDAzOTcwMTM5fQ%3D%3D--51b479b0a6183986394b7462fab0e201189d7ca2)
 
 In a more visual way, this is the one we made "on paper":
 
-![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/DIT_Structure.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvRElUX1N0cnVjdHVyZS5wbmciLCJleHBpcmVzIjoxNDAzMjU2MjU5fQ%3D%3D--b35c1d00171fd87e478992f38fc14e2b228e92c1)
+![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/DIT_Structure.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvRElUX1N0cnVjdHVyZS5wbmciLCJleHBpcmVzIjoxNDAzOTcwMDg5fQ%3D%3D--2d03bd7a068ff14464fa38f616aee18fcba169a0)
 
 The fact that our "tree" is as flat as possible makes it easier to treat certain "exceptions", such as having a teacher that also is part of administration, or someone teaching in two different departments. In this fashion, our people can easily switch from TIC to TIN, from Student to Assistant, etc.
 
@@ -32,7 +32,7 @@ Now there was an other problem. To represent users, we use the class inetOrgPers
      add: objectClasses
      objectClasses: ( heigpeople-oid NAME 'heigPeople' DESC 'People from HEIG-VD' SUP ( inetOrgPerson $ top ) STRUCTURAL MAY sexType X-SCHEMA-FILE 'heig-user.ldif'
  
-![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/ADD_sexType.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvQUREX3NleFR5cGUucG5nIiwiZXhwaXJlcyI6MTQwMzQyNTgzOH0%3D--7c8d4363bc2fbecbe352331fcd714ccbb63402a7)   
+![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/ADD_sexType.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvQUREX3NleFR5cGUucG5nIiwiZXhwaXJlcyI6MTQwMzk3MDE1OH0%3D--9d470661648b52dbae128dba0882beb9c2889167)   
 
 To create the heigPeople class, this file was used:
 
@@ -87,7 +87,7 @@ So there is an entry for each person. The departments are also present at the en
 Once this was imported in OpenDJ, using the import option, we get this result :
 
 
-![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/Manage_Entries.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvTWFuYWdlX0VudHJpZXMucG5nIiwiZXhwaXJlcyI6MTQwMzQyNTg4OX0%3D--8234ec3f643c4b39a926819c36bf9b0b858521ea)
+![alt tag](https://raw.githubusercontent.com/bbcnt/RES_LDAP_Lab/master/images/Manage_Entries.png?token=3993580__eyJzY29wZSI6IlJhd0Jsb2I6YmJjbnQvUkVTX0xEQVBfTGFiL21hc3Rlci9pbWFnZXMvTWFuYWdlX0VudHJpZXMucG5nIiwiZXhwaXJlcyI6MTQwMzk3MDE3NX0%3D--14be356e75bb31701a6bab7b917622f71aa80025)
 
 On the left, all the "People" can be seen and some filters can also be applied here. Talking about filters, this is what the new task is all about.
 
