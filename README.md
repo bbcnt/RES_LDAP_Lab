@@ -201,7 +201,7 @@ And then :
 
 And then we do this : 
     
-    ./ldapmodify --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --defaultAdd --filename /home/bruno/NamesStartingByA.ldif Processing ADD request for cn=StartingByA,ou=People,dc=heigvd,dc=ch
+    ./ldapmodify --port 1389 --bindDN "cn=Directory Manager" --bindPassword 123456 --defaultAdd --filename /home/bruno/NamesStartingByA.ldif
 
 **What command do you run to get the list of these students?**
 
